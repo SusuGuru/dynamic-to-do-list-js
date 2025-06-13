@@ -3,21 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
-    // Load tasks from local storage on page load
+    // Load saved tasks from local storage
     loadTasks();
 
-    // Add task when button is clicked
+    // Add Task Button
     addButton.addEventListener('click', () => {
         const taskText = taskInput.value.trim();
         if (taskText !== '') {
             addTask(taskText);
             taskInput.value = '';
         } else {
-            alert('Please enter a task');
+            alert('Please enter a task.');
         }
     });
 
-    // Add task when Enter key is pressed
+    // Add task on Enter key
     taskInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             const taskText = taskInput.value.trim();
@@ -25,12 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 addTask(taskText);
                 taskInput.value = '';
             } else {
-                alert('Please enter a task');
+                alert('Please enter a task.');
             }
         }
     });
 
-    // Function to add task to the list and local storage
     function addTask(taskText, save = true) {
         const li = document.createElement('li');
         li.textContent = taskText;
@@ -38,8 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
         removeBtn.className = 'remove-btn';
+
+        // Remove task from UI and localStorage
         removeBtn.onclick = () => {
-            li.remove();
+            taskList.removeChild(li);
             removeTaskFromStorage(taskText);
         };
 
@@ -47,22 +48,24 @@ document.addEventListener('DOMContentLoaded', () => {
         taskList.appendChild(li);
 
         if (save) {
-            const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-            storedTasks.push(taskText);
-            localStorage.setItem('tasks', JSON.stringify(storedTasks));
+            saveTaskToStorage(taskText);
         }
     }
 
-    // Function to load tasks from local storage
-    function loadTasks() {
-        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        storedTasks.forEach(taskText => addTask(taskText, false));
+    function saveTaskToStorage(taskText) {
+        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        tasks.push(taskText);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    // Function to remove task from local storage
     function removeTaskFromStorage(taskText) {
+        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        tasks = tasks.filter(task => task !== taskText);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
         const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        const updatedTasks = storedTasks.filter(task => task !== taskText);
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        storedTasks.forEach(task => addTask(task, false)); // false = don't re-save to avoid duplicates
     }
 });
