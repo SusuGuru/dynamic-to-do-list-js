@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
-        removeBtn.className = 'remove-btn';
+        removeBtn.classList.add('remove-btn'); // ✅ use classList.add
 
         removeBtn.addEventListener('click', function () {
             taskList.removeChild(li);
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'Remove';
-            removeBtn.className = 'remove-btn';
+            removeBtn.classList.add('remove-btn'); // ✅ use classList.add
 
             removeBtn.addEventListener('click', function () {
                 taskList.removeChild(li);
