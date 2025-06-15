@@ -1,17 +1,58 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const addButton = document.getElementById('add-task-btn');
-    const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list');
+// Define addTask function globally
+function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText === '') {
+        alert('Please enter a task.');
+        return;
+    }
 
-    loadTasks();
+    const li = document.createElement('li');
+    li.textContent = taskText;
 
-    function addTask() {
-        const taskText = taskInput.value.trim();
-        if (taskText === '') {
-            alert('Please enter a task.');
-            return;
-        }
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.className = 'remove-btn';
 
+    removeBtn.onclick = () => {
+        taskList.removeChild(li);
+        removeTaskFromStorage(taskText);
+    };
+
+    li.appendChild(removeBtn);
+    taskList.appendChild(li);
+
+    saveTaskToStorage(taskText);
+    taskInput.value = '';
+}
+
+// Declare DOM elements in global scope
+const addButton = document.getElementById('add-task-btn');
+const taskInput = document.getElementById('task-input');
+const taskList = document.getElementById('task-list');
+
+// Attach event listeners globally
+addButton.addEventListener('click', addTask);
+taskInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        addTask();
+    }
+});
+
+function saveTaskToStorage(taskText) {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.push(taskText);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function removeTaskFromStorage(taskText) {
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks = tasks.filter(task => task !== taskText);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function loadTasks() {
+    const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    storedTasks.forEach(taskText => {
         const li = document.createElement('li');
         li.textContent = taskText;
 
@@ -26,48 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         li.appendChild(removeBtn);
         taskList.appendChild(li);
-
-        saveTaskToStorage(taskText);
-        taskInput.value = '';
-    }
-
-    addButton.addEventListener('click', addTask);
-
-    taskInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            addTask();
-        }
     });
+}
 
-    function saveTaskToStorage(taskText) {
-        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        tasks.push(taskText);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    function removeTaskFromStorage(taskText) {
-        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        tasks = tasks.filter(task => task !== taskText);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    function loadTasks() {
-        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        storedTasks.forEach(taskText => {
-            const li = document.createElement('li');
-            li.textContent = taskText;
-
-            const removeBtn = document.createElement('button');
-            removeBtn.textContent = 'Remove';
-            removeBtn.className = 'remove-btn';
-
-            removeBtn.onclick = () => {
-                taskList.removeChild(li);
-                removeTaskFromStorage(taskText);
-            };
-
-            li.appendChild(removeBtn);
-            taskList.appendChild(li);
-        });
-    }
+// Call everything only when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
 });
