@@ -61,14 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Attach Event Listeners
     addButton.addEventListener('click', addTask);
+
     taskInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             addTask();
         }
     });
 
-    // Load any saved tasks
     loadTasks();
 });
